@@ -21,6 +21,7 @@ services:
       - "discovery.type=single-node"
       - "xpack.security.enrollment.enabled=false"
       - "xpack.security.enabled=false"
+      - "ES_JAVA_OPTS=-Xms1024m -Xmx4096m"
     volumes:
       - ./data/elasticsearch:/usr/share/elasticsearch/data
   beats:
