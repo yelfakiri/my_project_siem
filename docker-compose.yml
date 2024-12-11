@@ -23,6 +23,23 @@ services:
       - "xpack.security.enabled=false"
     volumes:
       - ./data/elasticsearch:/usr/share/elasticsearch/data
+  beats:
+    image: docker.elastic.co/beats/filebeat:8.16.1
+    volumes:
+      - ./data/suricata/logs/eve.json:/suricata-logs/eve/json
+      - ./config/filebeats/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+    networks:
+      - somenetwork
+  suricata:
+      build:
+        context: ./Dockerfiles/suricata/.
+      network_mode: host
+      volumes:
+        - ./config/suricata/suricata.yml:/etc/suricata/suricata.yml
+        - ./data/suricata/rules:/var/lib/suricata/rules
+        - ./data/suricata/logs:/var/log/suricata/
+      # change wlp3s0 by result of ip addr
+      command: /bin/bash -c "suricata-update && suricata -c /etc/suricata/suricata.yaml -i br_juice && tail -f /var/log/cron.log"
 
 networks:
   somenetwork:
